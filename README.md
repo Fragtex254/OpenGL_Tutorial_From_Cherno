@@ -1,2 +1,2 @@
 # OpenGL_Tutorial_From_Cherno
-177CM/OpenGL_Fragtex_LearningRecord to confirm.
+This is a record repository of me to learn a great OpenGL tutorial from the Cherno
