@@ -1,4 +1,14 @@
+#include <GL\glew.h>
 #include <GLFW/glfw3.h>
+#include<iostream>
+
+/*
+* all the learning resources link here:
+* https://docs.gl/
+* https://learnopengl-cn.github.io/
+* https://glew.sourceforge.net/
+*/
+
 
 int main(void)
 {
@@ -18,6 +28,19 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    /* Init the GLEW and glewInit function have to behide the windowcontext*/
+    if (glewInit()!=GLEW_OK)
+    {
+        std::cout << "Failed to initialize GLEW" << std::endl;
+    }
+
+    //
+    std::cout << glGetString(GL_VERSION) << std::endl;
+
+
+
+
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
