@@ -10,6 +10,7 @@
 * all the learning resources link here:
 * https://docs.gl/
 * https://learnopengl-cn.github.io/
+* https://www.glfw.org/
 * https://glew.sourceforge.net/
 */
 #pragma endregion
@@ -142,11 +143,18 @@ int main(void)
     #pragma region Initial part
     GLFWwindow* window;
 
-    glfwSwapInterval(1);
+    glfwSwapInterval(5);
 
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+    glfwInitHint(GLEW_VERSION_MAJOR, 3);
+    glfwInitHint(GLFW_VERSION_MINOR, 3);
+    glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    /*
+    *GLFW_OPENGL_COMPAT_PROFILE has a default vao for you but GLFW_OPENGL_CORE_PROFILE has not!
+    */
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -184,6 +192,10 @@ int main(void)
         2,3,0
     };
 
+    unsigned int vao;
+    glGenBuffers(1, &vao);
+    glBindVertexArray(vao);
+
     unsigned int vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -201,10 +213,15 @@ int main(void)
 
     unsigned int shader = CreataShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
-
     int location = glGetUniformLocation(shader, "u_Color");
     ASSERT(location != -1);
     glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f);
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 
     float r = 0.0f;
     float increment = 0.05f;
@@ -219,7 +236,10 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(shader);
         glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
         if (r>1.0f)
         {
