@@ -5,14 +5,16 @@
 #include <string>
 #include <sstream>
 
+#pragma region Resource Link
 /*
 * all the learning resources link here:
 * https://docs.gl/
 * https://learnopengl-cn.github.io/
 * https://glew.sourceforge.net/
 */
+#pragma endregion
 
-#pragma region Debug #define
+#pragma region Debug define
 #define ASSERT(x) if(!(x)) __debugbreak();
 //use this back-slant to keep the code stiil in one #define
 #define GLCall(x) GLClearError();\
@@ -28,7 +30,6 @@
 */
 
 #pragma endregion
-
 
 #pragma region Debug function
 void GLClearError()
@@ -141,6 +142,8 @@ int main(void)
     #pragma region Initial part
     GLFWwindow* window;
 
+    glfwSwapInterval(1);
+
     /* Initialize the library */
     if (!glfwInit())
         return -1;
@@ -195,14 +198,16 @@ int main(void)
 
 
     ShaderProgramSources source = ParseShader("res/shaders/Basic.shader");
-    //std::cout << "Vertex Shader" << std::endl;
-    //std::cout << source.VertexSource << std::endl;
-    //std::cout << "Fragment Shader" << std::endl;
-    //std::cout << source.FragmentSource << std::endl;
 
     unsigned int shader = CreataShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
 
+    int location = glGetUniformLocation(shader, "u_Color");
+    ASSERT(location != -1);
+    glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f);
+
+    float r = 0.0f;
+    float increment = 0.05f;
 
     #pragma endregion
 
@@ -213,6 +218,19 @@ int main(void)
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
+
+        if (r>1.0f)
+        {
+            increment = -0.05f;
+        }
+        else if (r<0.0f)
+        {
+            increment = 0.05f;
+        }
+
+        r += increment;
 
         //it is important to emphasize the parameter of type in the Function::glDrawElements(type),must be the GL_UNSIGNED_INT!!!
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

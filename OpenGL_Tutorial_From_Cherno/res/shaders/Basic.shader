@@ -14,8 +14,9 @@ void main()
 
 layout(location = 0) out vec4 color;
 
+uniform vec4 u_Color;//"u_varient" mean this varient is a uniform varient
 
 void main()
 {
-	color = vec4(0.2, 0.3, 0.8, 1.0);
+	color = u_Color;
 };
