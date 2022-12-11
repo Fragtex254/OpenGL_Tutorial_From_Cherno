@@ -2,7 +2,7 @@
 class IndexBuffer
 {
 private:
-	unsigned int m_RenderID;
+	unsigned int m_RendererID;
 	//Why here is just RenderID is because in actual engine we will probably use several Graphic API
 	//In order to have a better way to manage them, we usually have use RenderID to emphasize this feature
 	unsigned int m_Count;
@@ -11,7 +11,7 @@ public:
 	~IndexBuffer();
 
 	void Bind() const ;
-	void UnBind() const ;
+	void Unbind() const ;
 
 	inline const int getCount() const { return m_Count; }
 

@@ -9,6 +9,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
+#include "Shader.h"
 
 #pragma region Resource Link
 /*
@@ -21,102 +22,12 @@
 #pragma endregion
 
 
-
-#pragma region ShaderFunction
-struct ShaderProgramSources
-{
-    std::string VertexSource;
-    std::string FragmentSource;
-
-};
-
-static ShaderProgramSources ParseShader(const std::string& filepath)
-{
-    std::ifstream stream(filepath);
-
-    //This enum class just like a classifier
-    enum class ShaderType 
-    {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-
-
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-
-    /*    
-    *Read the all lines in the file and find the flag "#shader" and then start to pick line up
-    *Set the classifier's state and put the line into two shader string stream
-    *And use the constructor to return a "ShaderProgramSources" struct
-    */
-
-    while (std::getline(stream, line))
-    {
-        if (line.find("#shader") != std::string::npos)
-        {
-            if (line.find("vertex") != std::string::npos)
-                type = ShaderType::VERTEX;
-            else if (line.find("fragment") != std::string::npos)
-                type = ShaderType::FRAGMENT;
-        }
-        else {
-            ss[(int)type] << line << "\n";
-        }
-    }
-    return { ss[0].str(),ss[1].str() };
-}
-
-unsigned int compileShader(unsigned int type, const std::string& source) {
-    unsigned int id = glCreateShader(type);
-    const char* src = source.c_str();
-
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
-    int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-    //check the state of shader if sth wrong will print log in the console
-    if (result == GL_FALSE)
-    {
-        int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)alloca(length * sizeof(char));
-        glGetShaderInfoLog(id, length, &length, message);
-        std::cout << "Failed to compiled " <<
-            (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << "shader!" << std::endl;
-        std::cout << message << std::endl;
-        glDeleteShader(id);//don't forget to delete shader in this case
-        return 0;
-    }
-
-    return id;
-}
-
-static unsigned int  CreataShader(const std::string& vertexShader, const std::string& fragmentShader) {
-    unsigned int program = glCreateProgram();
-    unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    //link the shader with the program
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    glValidateProgram(program);
-    //delete the shader
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-    //and return the "V&Fshadered" program id
-    return program;
-}
-#pragma endregion
-
-
 int main(void)
 {
     #pragma region Initial part
     GLFWwindow* window;
 
-    glfwSwapInterval(5);
+    glfwSwapInterval(1);
 
     /* Initialize the library */
     if (!glfwInit())
@@ -173,21 +84,14 @@ int main(void)
 
         IndexBuffer ib(indices, 6);
 
+        Shader shader("res/shaders/Basic.shader");
+        shader.Bind();
+        shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
-
-        ShaderProgramSources source = ParseShader("res/shaders/Basic.shader");
-
-        unsigned int shader = CreataShader(source.VertexSource, source.FragmentSource);
-        glUseProgram(shader);
-        int location = glGetUniformLocation(shader, "u_Color");
-        ASSERT(location != -1);
-        glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f);
-
-        glBindVertexArray(0);
-        glUseProgram(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+        va.Unbind();
+        vb.Unbind();
+        ib.Unbind();
+        shader.Unbind();
 
         float r = 0.0f;
         float increment = 0.05f;
@@ -202,10 +106,10 @@ int main(void)
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
-            glUseProgram(shader);
-            glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
             va.Bind();
             ib.Bind();
+            shader.Bind();
+            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
             if (r > 1.0f)
             {
@@ -231,7 +135,6 @@ int main(void)
 
 
         #pragma region terminal
-        glDeleteProgram(shader);
     }
     glfwTerminate();
     #pragma endregion
