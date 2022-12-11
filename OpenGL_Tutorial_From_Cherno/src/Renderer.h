@@ -1,6 +1,10 @@
 #pragma once
 #include <GL\glew.h>
 
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
+
 #pragma region Debug define
 #define ASSERT(x) if(!(x)) __debugbreak();
 //use this back-slant to keep the code stiil in one #define
@@ -25,3 +29,13 @@ void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
 #pragma endregion
+
+
+class Renderer
+{
+public:
+	void Draw(const VertexArray& va, const IndexBuffer& vb, const Shader& shader)const;
+	void Clear()const;
+private:
+
+};
