@@ -2,11 +2,14 @@
 #version 330 core
 
 layout(location = 0) in vec4 position;
-//if we input vec2 this will implicit conversion to vec4
+layout(location = 1) in vec2 texCoord;
+
+out vec2 v_TexCoord;
 
 void main()
 {
 	gl_Position = position;
+	v_TexCoord = texCoord;
 };
 
 #shader fragment
@@ -14,9 +17,13 @@ void main()
 
 layout(location = 0) out vec4 color;
 
+in vec2 v_TexCoord;
+
 uniform vec4 u_Color;//"u_varient" mean this varient is a uniform varient
+uniform sampler2D u_Texture;
 
 void main()
 {
-	color = u_Color;
+	vec4 texture = texture(u_Texture, v_TexCoord);
+	color = texture;
 };
