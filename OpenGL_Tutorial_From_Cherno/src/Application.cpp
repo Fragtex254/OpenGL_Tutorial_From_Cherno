@@ -13,8 +13,14 @@
 #include "Shader.h"
 #include "Texture.h"
 
+//glm math library
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+
+//imgui
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 
 #pragma region Resource Link
 /*
@@ -46,7 +52,7 @@ int main(void)
     */
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -69,10 +75,10 @@ int main(void)
         #pragma region Prepare Render Data
 
         float positions[]{
-            -0.5f, -0.5f, 0.0f, 0.0f,
-             0.5f, -0.5f, 1.0f, 0.0f,
-             0.5f,  0.5f, 1.0f, 1.0f,
-             -0.5f,  0.5f, 0.0f,1.0f
+             100.0f, 100.0f, 0.0f, 0.0f,
+             200.0f, 100.0f, 1.0f, 0.0f,
+             200.0f, 200.0f, 1.0f, 1.0f,
+             100.0f, 200.0f, 0.0f, 1.0f
         };
 
         unsigned int indices[]
@@ -96,14 +102,12 @@ int main(void)
 
         glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
 
-        glm::mat4 mvp = proj * view * model;
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", mvp);
+
 
         Texture texture("res/textures/kazuha.png");
         texture.Bind();
@@ -116,11 +120,29 @@ int main(void)
 
         Renderer renderer;
 
+        #pragma region ImGui_Init
+
+		// Setup ImGui binding
+		ImGui::CreateContext();
+		ImGui_ImplGlfwGL3_Init(window, true);
+		// Setup style
+		ImGui::StyleColorsDark();
+
+        #pragma endregion
+
+
+
         float r = 0.0f;
         float increment = 0.05f;
 
         #pragma endregion
 
+        //some imgui macro
+		bool show_demo_window = true;
+		bool show_another_window = false;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+        glm::vec3 translation(200, 200, 0);
 
         #pragma region Render Loop
         /* Loop until the user closes the window */
@@ -129,9 +151,14 @@ int main(void)
             /* Render here */
             renderer.Clear();
 
+			ImGui_ImplGlfwGL3_NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-
+            shader.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
 
@@ -146,8 +173,14 @@ int main(void)
 
             r += increment;
 
-            //it is important to emphasize the parameter of type in the Function::glDrawElements(type),must be the GL_UNSIGNED_INT!!!
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+			{
+				ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f); 
+				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			}
+
+
+			ImGui::Render();
+			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -160,6 +193,9 @@ int main(void)
 
         #pragma region terminal
     }
+
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
     glfwTerminate();
     #pragma endregion
 
