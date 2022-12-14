@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLFW\include;src\vendor;$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLFW\include;src\vendor;src;$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLEW_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLFW\include;src\vendor;$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLFW\include;src\vendor;src;$(SolutionDir)\OpenGL_Tutorial_From_Cherno\Dependences\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
@@ -157,6 +157,8 @@
     <ClCompile Include="src\VertexBufferLayout.cpp" />
     <ClCompile Include="src\vendor\stb\stb_image.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Test\Test.cpp" />
+    <ClCompile Include="src\Test\TestClearColor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -595,6 +597,8 @@
     <ClInclude Include="src\VertexBufferLayout.h" />
     <ClInclude Include="src\vendor\stb\stb_image.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Test\Test.h" />
+    <ClInclude Include="src\Test\TestClearColor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
