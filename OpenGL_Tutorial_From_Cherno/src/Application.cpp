@@ -97,6 +97,11 @@ int main(void)
 
         #pragma endregion
 
+        Test::Test* currentTest = nullptr;
+        Test::TestMenu* testMenu = new Test::TestMenu(currentTest);
+        currentTest = testMenu;
+        testMenu->RegisterTest<Test::TestClearColor>("Clear Color");
+
         Test::TestClearColor test;
 
         #pragma region Render Loop
@@ -105,16 +110,34 @@ int main(void)
         {
             renderer.Clear();
 
-            test.OnUpdate(0.0f);
-            test.OnRender();
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
 
 			ImGui_ImplGlfwGL3_NewFrame();
-            test.OnImGuiRender();
+
+            if (currentTest)
+            {
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if (currentTest != testMenu && ImGui::Button(("<-")))
+                {
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
+                ImGui::End();
+            }
 			ImGui::Render();
 			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
             glfwSwapBuffers(window);
             glfwPollEvents();
+        }
+        delete currentTest;
+        if (currentTest!=testMenu)
+        {
+            delete testMenu;
         }
         #pragma endregion
 
