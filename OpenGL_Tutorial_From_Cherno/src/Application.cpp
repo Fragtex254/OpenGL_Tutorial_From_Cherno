@@ -101,7 +101,7 @@ int main(void)
         Test::Test* currentTest = nullptr;
         Test::TestMenu* testMenu = new Test::TestMenu(currentTest);
         currentTest = testMenu;
-        testMenu->RegisterTest<Test::TestTexture2D>("Clear Color");
+        testMenu->RegisterTest<Test::TestClearColor>("Clear Color");
         testMenu->RegisterTest<Test::TestTexture2D>("2D Texture");
 
         Test::TestTexture2D test;
