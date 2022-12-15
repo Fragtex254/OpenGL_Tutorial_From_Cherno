@@ -63,6 +63,9 @@
     <ClCompile Include="src\Test\TestClearColor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Test\TestTexture2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -1371,6 +1374,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Test\TestClearColor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Test\TestTexture2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
